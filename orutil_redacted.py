@@ -582,7 +582,7 @@ def filterCases(filtered_surgn_df, filterByDate, prim_surg):
     dfSDate2 = dfSDate2.loc[(dfSDate2['redacted_surgn_col_2'] == dfSDate2['redacted_surgn_col_6']) |
                             pd.isnull(dfSDate2['redacted_surgn_col_6'])]
     
-    #filter AUDIT_ACTIONS ---------------
+    #filter procedure actions ---------------
     dfSDate2 = dfSDate2.loc[(dfSDate2['redacted_surgn_col_10'] == prim_surg)]
     dfSDate2 = dfSDate2.loc[(dfSDate2['redacted_surgn_col_4'] == 'Scheduled') | 
                       (dfSDate2['redacted_surgn_col_4'] == 'Removed')|
@@ -608,7 +608,7 @@ def filterCases(filtered_surgn_df, filterByDate, prim_surg):
 #######  CREATE TIMESERIES DICTIONARY - given sched_date ########
 ######################################################################
 
-#creates ordered dictionary of audit dates for specified room, sched date, and surgeon
+#creates ordered dictionary of action dates for specified room, sched date, and surgeon
 # refactor if time - this was first dict fxn made so it's messy
 
 def makeCaseDict(df, verbose=False):
@@ -770,7 +770,7 @@ def makeDictPlottable(dict_to_plot, verbose=False):
 
         for i in dict_to_plot.keys():
             for j in dict_to_plot[i].keys():
-                dateList.append(j) #create list of audit dates where something happened
+                dateList.append(j) #create list of action dates where something happened
                 for k in dict_to_plot[i][j]:
                     numCases.append(len(dict_to_plot[i][j][k])) #list of lists of cases to plot
                     caseNums.append(dict_to_plot[i][j][k]) #number of cases (if wanting to plot cases rather than mins)
@@ -854,7 +854,7 @@ def percentUtil(accum_mins_list, total_block_time):
     return accum_percent_list
 
 ######################################################################
-#### converts list of date strs (ie. audit dates) to datetime objs ###
+#### converts list of date strs (ie. action dates) to datetime objs ###
 ######################################################################
 
 def makeDateObj(list_of_date_strings):
@@ -916,14 +916,14 @@ def limitDaysback(dict_to_limit, max_days_back, verbose=False):
 #### put plot dict together ####
 ##################################################################
 
-def assemblePlotDict(empty_dict, dict_of_audit_date_actions, tally_before_window):
+def assemblePlotDict(empty_dict, dict_of_proc_date_actions, tally_before_window):
     plotDict = OrderedDict()
     
-    #iterate through empty_dict and fill when audit action occurs
+    #iterate through empty_dict and fill when procedure action occurs
     for r in empty_dict:
-        if r in dict_of_audit_date_actions:
-            plotDict[r] = dict_of_audit_date_actions.get(r)
-            tally_before_window = dict_of_audit_date_actions.get(r)
+        if r in dict_of_proc_date_actions:
+            plotDict[r] = dict_of_proc_date_actions.get(r)
+            tally_before_window = dict_of_proc_date_actions.get(r)
         else:
             plotDict[r] = tally_before_window 
 
@@ -986,7 +986,7 @@ def ts_plots(filtered_df, agg_dates_to_plot, plotDicts, num_lookback_days, verbo
             if verbose:
                 print(f'accum_percent_util:', accum_percent_util)
 
-            #convert audit dates list from strs back to datetime objs
+            #convert action dates list from strs back to datetime objs
             dateSubList = list(plotDicts[key].values())
             if verbose:
                 print(f'dateSubList:', dateSubList)
